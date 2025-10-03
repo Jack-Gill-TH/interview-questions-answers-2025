@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStaticNavigation, StaticParamList } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -5,11 +6,18 @@ import { Platform } from 'react-native';
 
 import HomeScreen from './screens/Home';
 import Listings from './screens/Listings';
+import Listing from './screens/Listing';
 import NotFound from './screens/NotFound';
 
+import { LoggedInContext } from '../App';
 import { HapticTab } from '../components/HapticTab';
 import { IconSymbol } from '../components/ui/IconSymbol';
 import TabBarBackground from '../components/ui/TabBarBackground';
+
+function useIsLoggedIn() {
+  const { isLoggedIn } = useContext(LoggedInContext);
+  return isLoggedIn;
+}
 
 const HomeTabs = createBottomTabNavigator({
   screens: {
@@ -21,6 +29,7 @@ const HomeTabs = createBottomTabNavigator({
       },
     },
     Listings: {
+      if: useIsLoggedIn,
       screen: Listings,
       options: {
         headerShown: false,
@@ -50,6 +59,14 @@ const RootStack = createNativeStackNavigator({
         headerShown: false,
       },
     },
+    Listing: {
+      if: useIsLoggedIn,
+      screen: Listing,
+      options: {
+        title: 'Listing Details',
+      },
+      getId: ({ params }) => `Listing-${params.listingId}`,
+    },
     NotFound: {
       screen: NotFound,
       options: {
@@ -65,7 +82,6 @@ const RootStack = createNativeStackNavigator({
 export const Navigation = createStaticNavigation(RootStack);
 
 type RootStackParamList = StaticParamList<typeof RootStack>;
-
 declare global {
   namespace ReactNavigation {
     interface RootParamList extends RootStackParamList {}

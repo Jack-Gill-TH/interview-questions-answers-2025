@@ -1,13 +1,17 @@
 import 'react-native-gesture-handler';
 import { useEffect, useState, createContext } from "react";
+import { Text } from "react-native";
 import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Linking from 'expo-linking';
 import {
   useNavigationContainerRef,
 } from '@react-navigation/native';
 import { useLogger } from '@react-navigation/devtools';
 
 import { Navigation } from './navigation';
+
+const prefix = Linking.createURL();
 
 SplashScreen.preventAutoHideAsync();
 
@@ -21,6 +25,11 @@ export function App() {
   const navigationRef = useNavigationContainerRef();
 
   useLogger(navigationRef);
+
+  const linking = {
+    enabled: 'auto',
+    prefixes: [prefix],
+  };
 
   useEffect(() => {
       async function enableMocking() {
@@ -75,7 +84,7 @@ export function App() {
 
   return (
     <LoggedInContext.Provider value={{ isLoggedIn, toggleIsLoggedIn }}>
-      <Navigation ref={navigationRef} />
+      <Navigation linking={linking} fallback={<Text>Loading...</Text>} ref={navigationRef}/>
     </LoggedInContext.Provider>
   );
 }

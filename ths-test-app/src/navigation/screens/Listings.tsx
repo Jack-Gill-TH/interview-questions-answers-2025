@@ -1,46 +1,35 @@
 import { useEffect, useState } from "react";
-import { Text, View, StyleSheet, FlatList } from "react-native";
+import { Text, View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 
-const ListingRow = ({title}) => (
-  <View style={styles.item}>
-    <Text style={styles.title}>{title}</Text>
-  </View>
-);
+const ListingRow = ({ id, title }) => {
+  const navigation = useNavigation();
+  return (
+    <TouchableOpacity onPress={() => navigation.navigate('Listing', { listingId: id })}>
+      <View style={styles.item}>
+        <Text style={styles.title} numberOfLines={1}>{title}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
 
-export default function HomeScreen() {
-  const [ serverStarted, setServerStarted ] = useState(false);
+export default function ListingsScreen() {
   const [ listingData, setListingData ] = useState([]);
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-      async function enableMocking() {
-        if (!__DEV__) {
-          return
-        }
-        await import('../../../msw.polyfills')
-        const { server } = await import('../../mocks/server')
-        server.listen()
-        setServerStarted(true);
-      }
-
-      enableMocking();
-  }, []);
-
-  useEffect(() => {
-    if(serverStarted) {
       fetch("/api/listings").then(response => response.json()).then(data => setListingData(data));
-    }
-  }, [serverStarted]);
+  }, []);
   
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <FlatList
         data={listingData}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({item}) => <ListingRow title={item.title} />}
+        renderItem={({item}) => <ListingRow id={item.id.toString()} title={item.title} />}
         style={styles.list}
       />
     </View>

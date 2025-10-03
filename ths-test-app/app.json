@@ -3,11 +3,11 @@
     "name": "ths-test-app",
     "slug": "ths-test-app",
     "version": "1.0.0",
+    "scheme": "thstestapp",
     "orientation": "portrait",
     "icon": "src/assets/images/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "scheme": "thstestapp",
     "ios": {
       "bundleIdentifier": "com.trustedhousesitters.thstestapp",
       "supportsTablet": true
